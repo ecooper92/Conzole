@@ -9,6 +9,7 @@ namespace Conzole
     public static class ConzoleUtils
     {
         internal const string DEFAULT_COUNT_FORMAT = "{0} result(s)";
+        internal static readonly Func<string, string, string> DEFAULT_LIST_FORMATTER = (index, value) => $"{index + 1}) {value}";
 
         // Start with the default console.
         private static IConsole _console = new DefaultConsole();
@@ -86,20 +87,20 @@ namespace Conzole
         /// Lists a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
-        public static void List<T>(T[] items) => List(items, i => i.ToString());
+        public static void List(string[] items) => List(items, DEFAULT_LIST_FORMATTER);
 
         /// <summary>
         /// Lists a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
-        /// <param name="stringConverter">Function that specifies how the item is displayed as a string.</param>
-        public static void List<T>(T[] items, Func<T, string> stringConverter)
+        /// <param name="customFormatter">Function takes the index and string and returns the display value.</param>
+        public static void List(string[] items, Func<string, string, string> customFormatter)
         {
             _console.WriteLine();
 
             for (int i = 0; i < items.Length; i++)
             {
-                _console.WriteLine($"{i + 1}) {stringConverter(items[i])}");
+                _console.WriteLine(customFormatter(i.ToString(), items[i]));
             }
             
             _console.WriteLine();
@@ -115,6 +116,7 @@ namespace Conzole
         /// Counts a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
+        /// <param name="format">Custom format for count.</param>
         public static void Count<T>(T[] items, string format)
         {
             _console.WriteLine();
