@@ -3,6 +3,7 @@ using Conzole;
 using Moq;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace Conzole.Tests
 {
@@ -75,6 +76,21 @@ namespace Conzole.Tests
             {
                 mockConsole.Verify(c => c.WriteLine(customFormatter(i.ToString(), items[i].ToString())));
             }
+        }
+
+        [Test]
+        public async Task TestBackListMenuAsync()
+        {
+            // Arrange
+            var menuItem1 = new ConzoleMenuItem("i1", () => Task.CompletedTask);
+            var menuItem2 = new ConzoleMenuItem("i2", () => Task.CompletedTask);
+            var menuItem3 = new ConzoleMenuItem("i3", () => Task.CompletedTask);
+            mockConsole.Setup(c => c.ReadLine()).Returns("0");
+
+            // Act
+            await ConzoleUtils.ListMenuAsync("The menu", menuItem1, menuItem2, menuItem3);
+
+            // Assert
         }
     }
 }

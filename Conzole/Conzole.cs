@@ -139,16 +139,19 @@ namespace Conzole
             {
                 // Display menu.
                 _console.WriteLine(title);
-                for (int i = 1; i < actions.Length; i++)
+                for (int i = 1; i < extendedActions.Length; i++)
                 {
-                    _console.WriteLine($"{i}) {actions[i].Title}");
+                    _console.WriteLine($"{i}) {extendedActions[i].Title}");
                 }
-                _console.WriteLine($"{0}) {actions[0].Title}");
+                _console.WriteLine($"{0}) {extendedActions[0].Title}");
 
                 var action = _console.ReadLine();
-                if (int.TryParse(action, out var result) && result >= 0 && result <= actions.Length)
+                if (int.TryParse(action, out var result) && result >= 0 && result <= extendedActions.Length)
                 {
-                    await actions[result - 1].ActionAsync();
+                    if (!await extendedActions[result].ActionAsync())
+                    {
+                        continueLooping = false;
+                    }
                 }
                 else
                 {
