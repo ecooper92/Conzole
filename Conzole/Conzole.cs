@@ -8,7 +8,8 @@ namespace Conzole
     /// </summary>
     public static class ConzoleUtils
     {
-        private static IConsole _console;
+        // Start with the default console.
+        private static IConsole _console = new DefaultConsole();
 
         /// <summary>
         /// Prompts the user to input a string value.
