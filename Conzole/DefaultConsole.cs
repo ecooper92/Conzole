@@ -1,28 +1,30 @@
+using System;
+
 namespace Conzole
 {
     /// <summary>
-    /// Represents a console where data can be read and written.
+    /// Wraps the system console functions.
     /// </summary>
-    public interface IConsole
+    public class DefaultConsole : IConsole
     {
         /// <summary>
         /// Write text with no termination.
         /// </summary>
-        void Write(string text);
+        public void Write(string text) => Console.Write(text);
 
         /// <summary>
         /// Write line terminator.
         /// </summary>
-        void WriteLine();
+        public void WriteLine() => Console.WriteLine();
 
         /// <summary>
         /// Write text with a line terminator.
         /// </summary>
-        void WriteLine(string text);
+        public void WriteLine(string text) => Console.WriteLine(text);
 
         /// <summary>
         /// Read text before a line terminator.
         /// </summary>
-        string ReadLine();
+        public string ReadLine() => Console.ReadLine();
     }
 }
