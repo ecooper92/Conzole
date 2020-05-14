@@ -8,6 +8,8 @@ namespace Conzole
     /// </summary>
     public static class ConzoleUtils
     {
+        internal const string DEFAULT_COUNT_FORMAT = "{0} result(s)";
+
         // Start with the default console.
         private static IConsole _console = new DefaultConsole();
 
@@ -107,7 +109,13 @@ namespace Conzole
         /// Counts a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
-        public static void Count<T>(T[] items, string format = "{0} result(s)")
+        public static void Count<T>(T[] items) => Count(items, DEFAULT_COUNT_FORMAT);
+
+        /// <summary>
+        /// Counts a collection of items for display.
+        /// </summary>
+        /// <param name="items">The items to display.</param>
+        public static void Count<T>(T[] items, string format)
         {
             _console.WriteLine();
             _console.WriteLine(string.Format(format, items.Length));

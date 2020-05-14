@@ -6,4 +6,9 @@
     <Authors>Eric Cooper</Authors>
     <Company>N/A</Company>
   </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Conzole.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>
