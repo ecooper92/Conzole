@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Conzole</PackageId>
+    <Version>0.1.1</Version>
+    <Authors>Eric Cooper</Authors>
+    <Company>N/A</Company>
   </PropertyGroup>
-
 </Project>

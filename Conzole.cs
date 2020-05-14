@@ -6,7 +6,7 @@ namespace Conzole
     /// <summary>
     /// Provides helper functions for managing console applications.
     /// </summary>
-    public static class Conzole
+    public static class ConzoleUtils
     {
         /// <summary>
         /// Prompts the user to input a string value.
