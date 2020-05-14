@@ -8,14 +8,16 @@ namespace Conzole
     /// </summary>
     public static class ConzoleUtils
     {
+        private static IConsole _console;
+
         /// <summary>
         /// Prompts the user to input a string value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
         public static string PromptString(string prompt)
         {
-            Console.WriteLine(prompt);
-            return Console.ReadLine();
+            _console.WriteLine(prompt);
+            return _console.ReadLine();
         }
 
         /// <summary>
@@ -67,8 +69,8 @@ namespace Conzole
 
             do
             {
-                Console.WriteLine(prompt + $" ({positiveResponse}/{negativeResponse})");
-                answer = Console.ReadLine();
+                _console.WriteLine(prompt + $" ({positiveResponse}/{negativeResponse})");
+                answer = _console.ReadLine();
                 isPositive = string.Equals(answer, positiveResponse, comparisonType);
                 isNegative = string.Equals(answer, negativeResponse, comparisonType);
             }
@@ -90,14 +92,14 @@ namespace Conzole
         /// <param name="stringConverter">Function that specifies how the item is displayed as a string.</param>
         public static void List<T>(T[] items, Func<T, string> stringConverter)
         {
-            Console.WriteLine();
+            _console.WriteLine();
 
             for (int i = 0; i < items.Length; i++)
             {
-                Console.WriteLine($"{i + 1}) {stringConverter(items[i])}");
+                _console.WriteLine($"{i + 1}) {stringConverter(items[i])}");
             }
             
-            Console.WriteLine();
+            _console.WriteLine();
         }
 
         /// <summary>
@@ -106,14 +108,14 @@ namespace Conzole
         /// <param name="items">The items to display.</param>
         public static void Count<T>(T[] items, string format = "{0} result(s)")
         {
-            Console.WriteLine();
-            Console.WriteLine(string.Format(format, items.Length));
-            Console.WriteLine();
+            _console.WriteLine();
+            _console.WriteLine(string.Format(format, items.Length));
+            _console.WriteLine();
         }
         
         public static async Task ListMenuAsync(string title, params ConzoleMenuItem[] actions)
         {
-            Console.WriteLine();
+            _console.WriteLine();
 
             // Add back option to list of actions.
             var extendedActions = new ConzoleMenuItem[actions.Length + 1];
@@ -125,22 +127,22 @@ namespace Conzole
             while (continueLooping)
             {
                 // Display menu.
-                Console.WriteLine(title);
+                _console.WriteLine(title);
                 for (int i = 1; i < actions.Length; i++)
                 {
-                    Console.WriteLine($"{i}) {actions[i].Title}");
+                    _console.WriteLine($"{i}) {actions[i].Title}");
                 }
-                Console.WriteLine($"{0}) {actions[0].Title}");
+                _console.WriteLine($"{0}) {actions[0].Title}");
 
-                var action = Console.ReadLine();
+                var action = _console.ReadLine();
                 if (int.TryParse(action, out var result) && result >= 0 && result <= actions.Length)
                 {
                     await actions[result - 1].ActionAsync();
                 }
                 else
                 {
-                    Console.WriteLine("Invalid action!");
-                    Console.WriteLine();
+                    _console.WriteLine("Invalid action!");
+                    _console.WriteLine();
                 }
             }
         }
@@ -161,5 +163,11 @@ namespace Conzole
 
             return success;
         }
+
+        /// <summary>
+        /// Sets the console used for writing and writing.
+        /// </summary>
+        /// <param name="console">The console to use for IO.</param>
+        internal static void SetConsole(IConsole console) => _console = console;
     }
 }
