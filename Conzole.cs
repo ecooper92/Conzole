@@ -96,30 +96,46 @@ namespace Conzole
             {
                 Console.WriteLine($"{i + 1}) {stringConverter(items[i])}");
             }
-
+            
             Console.WriteLine();
-            Console.WriteLine(items.Length + " result(s) found!");
+        }
+
+        /// <summary>
+        /// Counts a collection of items for display.
+        /// </summary>
+        /// <param name="items">The items to display.</param>
+        public static void Count<T>(T[] items, string format = "{0} result(s)")
+        {
+            Console.WriteLine();
+            Console.WriteLine(string.Format(format, items.Length));
             Console.WriteLine();
         }
         
-        public static async Task ListMenuAsync(string title, params (string Title, Func<Task> Action)[] actions)
+        public static async Task ListMenuAsync(string title, params ConzoleMenuItem[] actions)
         {
             Console.WriteLine();
 
+            // Add back option to list of actions.
+            var extendedActions = new ConzoleMenuItem[actions.Length + 1];
+            extendedActions[0] = new ConzoleMenuItem("Back", () => Task.FromResult(false));
+            actions.CopyTo(extendedActions, 1);
+
+            // Loop across actions.
             var continueLooping = true;
             while (continueLooping)
             {
+                // Display menu.
                 Console.WriteLine(title);
-                for (int i = 0; i < actions.Length; i++)
+                for (int i = 1; i < actions.Length; i++)
                 {
-                    Console.WriteLine($"{i + 1}) {actions[i].Title}");
+                    Console.WriteLine($"{i}) {actions[i].Title}");
                 }
-                Console.WriteLine("0) Back");
+                Console.WriteLine($"{0}) {actions[0].Title}");
 
                 var action = Console.ReadLine();
-                if (int.TryParse(action, out var result) && result > 0 && result <= actions.Length)
+                if (int.TryParse(action, out var result) && result >= 0 && result <= actions.Length)
                 {
-                    await actions[result - 1].Action();
+                    await actions[result - 1].ActionAsync();
                 }
                 else
                 {
