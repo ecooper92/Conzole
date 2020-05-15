@@ -58,7 +58,7 @@ namespace Conzole.Tests
             // Assert
             for (int i = 0; i < items.Length; i++)
             {
-                mockConsole.Verify(c => c.WriteLine(ConzoleUtils.DEFAULT_LIST_FORMATTER(i.ToString(), items[i].ToString())));
+                mockConsole.Verify(c => c.WriteLine(ConzoleUtils.DEFAULT_LIST_FORMATTER((i + 1).ToString(), items[i].ToString())));
             }
         }
 
@@ -75,7 +75,7 @@ namespace Conzole.Tests
             // Assert
             for (int i = 0; i < items.Length; i++)
             {
-                mockConsole.Verify(c => c.WriteLine(customFormatter(i.ToString(), items[i].ToString())));
+                mockConsole.Verify(c => c.WriteLine(customFormatter((i + 1).ToString(), items[i].ToString())));
             }
         }
 
