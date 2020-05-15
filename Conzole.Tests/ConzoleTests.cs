@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Conzole.Tests
 {
-    public class Tests
+    public class ConzoleTests
     {
         private Mock<IConsole> mockConsole;
 
@@ -15,6 +15,7 @@ namespace Conzole.Tests
         public void Setup()
         {
             mockConsole = new Mock<IConsole>(MockBehavior.Loose);
+
             ConzoleUtils.SetConsole(mockConsole.Object);
         }
 
@@ -82,13 +83,16 @@ namespace Conzole.Tests
         public async Task TestBackListMenuAsync()
         {
             // Arrange
-            var menuItem1 = new ConzoleMenuItem("i1", () => Task.CompletedTask);
-            var menuItem2 = new ConzoleMenuItem("i2", () => Task.CompletedTask);
-            var menuItem3 = new ConzoleMenuItem("i3", () => Task.CompletedTask);
             mockConsole.Setup(c => c.ReadLine()).Returns("0");
+            var menu = new Menu("The menu", new MenuItem[]
+            {
+                new MenuItem("i1", () => Task.CompletedTask),
+                new MenuItem("i2", () => Task.CompletedTask),
+                new MenuItem("i3", () => Task.CompletedTask)
+            });
 
             // Act
-            await ConzoleUtils.ListMenuAsync("The menu",  menuItem1, menuItem2, menuItem3);
+            await ConzoleUtils.ListMenuAsync(menu);
 
             // Assert - N/A
         }
@@ -97,19 +101,22 @@ namespace Conzole.Tests
         public async Task TestActionThenBackListMenuAsync()
         {
             // Arrange
-            var wasCalled = false;
-            var menuItem1 = new ConzoleMenuItem("i1", () => Task.CompletedTask);
-            var menuItem2 = new ConzoleMenuItem("i2", () => Task.CompletedTask);
-            var menuItem3 = new ConzoleMenuItem("i3", () =>
-            {
-                wasCalled = true;
-                mockConsole.Setup(c => c.ReadLine()).Returns("0");
-                return Task.CompletedTask;
-            });
             mockConsole.Setup(c => c.ReadLine()).Returns("3");
+            var wasCalled = false;
+            var menu = new Menu("The menu", new MenuItem[]
+            {
+                new MenuItem("i1", () => Task.CompletedTask),
+                new MenuItem("i2", () => Task.CompletedTask),
+                new MenuItem("i3", () =>
+                {
+                    wasCalled = true;
+                    mockConsole.Setup(c => c.ReadLine()).Returns("0");
+                    return Task.CompletedTask;
+                })
+            });
 
             // Act
-            await ConzoleUtils.ListMenuAsync("The menu",  menuItem1, menuItem2, menuItem3);
+            await ConzoleUtils.ListMenuAsync(menu);
 
             // Assert
             Assert.IsTrue(wasCalled);
@@ -119,19 +126,22 @@ namespace Conzole.Tests
         public async Task TestActionContinueThenBackListMenuAsync()
         {
             // Arrange
-            var wasCalled = false;
-            var menuItem1 = new ConzoleMenuItem("i1", () => Task.CompletedTask);
-            var menuItem2 = new ConzoleMenuItem("i2", () => Task.CompletedTask);
-            var menuItem3 = new ConzoleMenuItem("i3", () =>
-            {
-                wasCalled = true;
-                mockConsole.Setup(c => c.ReadLine()).Returns("0");
-                return Task.FromResult(true);
-            });
             mockConsole.Setup(c => c.ReadLine()).Returns("3");
+            var wasCalled = false;
+            var menu = new Menu("The menu", new MenuItem[]
+            {
+                new MenuItem("i1", () => Task.CompletedTask),
+                new MenuItem("i2", () => Task.CompletedTask),
+                new MenuItem("i3", () =>
+                {
+                    wasCalled = true;
+                    mockConsole.Setup(c => c.ReadLine()).Returns("0");
+                    return Task.FromResult(true);
+                })
+            });
 
             // Act
-            await ConzoleUtils.ListMenuAsync("The menu",  menuItem1, menuItem2, menuItem3);
+            await ConzoleUtils.ListMenuAsync(menu);
 
             // Assert
             Assert.IsTrue(wasCalled);
@@ -141,18 +151,21 @@ namespace Conzole.Tests
         public async Task TestActionStopListMenuAsync()
         {
             // Arrange
-            var wasCalled = false;
-            var menuItem1 = new ConzoleMenuItem("i1", () => Task.CompletedTask);
-            var menuItem2 = new ConzoleMenuItem("i2", () => Task.CompletedTask);
-            var menuItem3 = new ConzoleMenuItem("i3", () =>
-            {
-                wasCalled = true;
-                return Task.FromResult(false);
-            });
             mockConsole.Setup(c => c.ReadLine()).Returns("3");
+            var wasCalled = false;
+            var menu = new Menu("The menu", new MenuItem[]
+            {
+                new MenuItem("i1", () => Task.CompletedTask),
+                new MenuItem("i2", () => Task.CompletedTask),
+                new MenuItem("i3", () =>
+                {
+                    wasCalled = true;
+                    return Task.FromResult(false);
+                })
+            });
 
             // Act
-            await ConzoleUtils.ListMenuAsync("The menu",  menuItem1, menuItem2, menuItem3);
+            await ConzoleUtils.ListMenuAsync(menu);
 
             // Assert
             Assert.IsTrue(wasCalled);

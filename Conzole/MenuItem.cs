@@ -6,29 +6,36 @@ namespace Conzole
     /// <summary>
     /// An action that can be selected in a menu to be performed on the console.
     /// </summary>
-    public class ConzoleMenuItem
+    public class MenuItem
     {
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ConzoleMenuItem(string title, Func<Task> action)
+        public MenuItem(string title, Func<Task> action)
         {
             Title = title;
-            ActionAsync = async () =>
+            AsyncAction = async () =>
             {
                 await action();
                 return true;
             };
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MenuItem(string title, Func<Task<bool>> action)
+        {
+            Title = title;
+            AsyncAction = action;
+        }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ConzoleMenuItem(string title, Func<Task<bool>> action)
+        protected internal MenuItem(string title)
         {
             Title = title;
-            ActionAsync = action;
         }
 
         /// <summary>
@@ -37,9 +44,8 @@ namespace Conzole
         public string Title { get; }
 
         /// <summary>
-        /// The action that is performed when the item is selected.
-        /// If the task returns false, the menu will return to its parent.
+        /// The action for the menu item.
         /// </summary>
-        public Func<Task<bool>> ActionAsync { get; }
+        public Func<Task<bool>> AsyncAction { get; }
     }
 }

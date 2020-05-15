@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,43 +21,27 @@ namespace Conzole
         /// Prompts the user to input a string value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        public static string PromptString(string prompt)
+        public static string Prompt(string prompt)
         {
             _console.WriteLine(prompt);
-            return _console.ReadLine();
+            var result = _console.ReadLine();
+            Console.WriteLine();
+            return result;
         }
 
         /// <summary>
         /// Prompts the user to input an integer value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        /// <exception cref="System.ArgumentException">Thrown when a non integer value is input.</exception>
-        public static int PromptInt(string prompt)
-        {
-            var input = PromptString(prompt);
-            if (int.TryParse(input, out var result))
-            {
-                return result;
-            }
-            
-            throw new ArgumentException($"The value '{input}' could not be converted to an integer.");
-        }
+        /// <param name="result">The result of the user input.</param>
+        public static bool PromptInt(string prompt, out int result) => int.TryParse(Prompt(prompt), out result);
 
         /// <summary>
         /// Prompts the user to input an double value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        /// <exception cref="System.ArgumentException">Thrown when a non double value is input.</exception>
-        public static double PromptDouble(string prompt)
-        {
-            var input = PromptString(prompt);
-            if (double.TryParse(input, out var result))
-            {
-                return result;
-            }
-            
-            throw new ArgumentException($"The value '{input}' could not be converted to a double.");
-        }
+        /// <param name="result">The result of the user input.</param>
+        public static bool PromptDouble(string prompt, out double result) => double.TryParse(Prompt(prompt), out result);
 
         /// <summary>
         /// Prompts the user to input a binary response (true/false, yes/no, etc..).
@@ -120,36 +106,33 @@ namespace Conzole
         /// <param name="format">Custom format for count.</param>
         public static void Count<T>(T[] items, string format)
         {
-            _console.WriteLine();
             _console.WriteLine(string.Format(format, items.Length));
             _console.WriteLine();
         }
         
-        public static async Task ListMenuAsync(string title, params ConzoleMenuItem[] actions)
+        /// <summary>
+        /// Counts a collection of items for display.
+        /// </summary>
+        /// <param name="title">The items to display.</param>
+        /// <param name="format">Custom format for count.</param>
+        public static async Task ListMenuAsync(Menu menu)
         {
-            _console.WriteLine();
-
-            // Add back option to list of actions.
-            var extendedActions = new ConzoleMenuItem[actions.Length + 1];
-            extendedActions[0] = new ConzoleMenuItem("Back", () => Task.FromResult(false));
-            actions.CopyTo(extendedActions, 1);
-
-            // Loop across actions.
             var continueLooping = true;
             while (continueLooping)
             {
-                // Display menu.
-                _console.WriteLine(title);
-                for (int i = 1; i < extendedActions.Length; i++)
-                {
-                    _console.WriteLine($"{i}) {extendedActions[i].Title}");
-                }
-                _console.WriteLine($"{0}) {extendedActions[0].Title}");
+                WriteMenu(menu);
 
-                var action = _console.ReadLine();
-                if (int.TryParse(action, out var result) && result >= 0 && result <= extendedActions.Length)
+                if (PromptInt("Enter action#", out var result)
+                    && result <= menu.MenuItems.Length
+                    && (menu.IncludeExit && result >= 0) || (result > 0))
                 {
-                    if (!await extendedActions[result].ActionAsync())
+                    var selectedMenuItem = menu.MenuItems[result];
+                    var selectedMenu = selectedMenuItem as Menu;
+                    if (selectedMenu != null)
+                    {
+                        await ListMenuAsync(menu);
+                    }
+                    else if (!await selectedMenuItem.AsyncAction())
                     {
                         continueLooping = false;
                     }
@@ -157,7 +140,6 @@ namespace Conzole
                 else
                 {
                     _console.WriteLine("Invalid action!");
-                    _console.WriteLine();
                 }
             }
         }
@@ -184,5 +166,29 @@ namespace Conzole
         /// </summary>
         /// <param name="console">The console to use for IO.</param>
         internal static void SetConsole(IConsole console) => _console = console;
+
+        /// <summary>
+        /// Write menu text to console.
+        /// </summary>
+        /// <param name="menu">The menu to write.</param>
+        private static void WriteMenu(Menu menu)
+        {
+            // Write title.
+            _console.WriteLine(menu.Title);
+
+            // Write main cases.
+            for (int i = 1; i < menu.MenuItems.Length; i++)
+            {
+                _console.WriteLine($"{i}) {menu.MenuItems[i].Title}");
+            }
+
+            // Write exit case if supported.
+            if (menu.IncludeExit)
+            {
+                _console.WriteLine($"{0}) {menu.MenuItems[0].Title}");
+            }
+            
+            _console.WriteLine();
+        }
     }
 }
