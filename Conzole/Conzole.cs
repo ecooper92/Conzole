@@ -12,7 +12,7 @@ namespace Conzole
     public static class ConzoleUtils
     {
         internal const string DEFAULT_COUNT_FORMAT = "{0} result(s)";
-        internal static readonly Func<string, string, string> DEFAULT_LIST_FORMATTER = (index, value) => $"{index + 1}) {value}";
+        internal static readonly Func<string, string, string> DEFAULT_LIST_FORMATTER = (index, value) => $"{index}) {value}";
 
         // Start with the default console.
         private static IConsole _console = new DefaultConsole();
@@ -87,7 +87,7 @@ namespace Conzole
 
             for (int i = 0; i < items.Length; i++)
             {
-                _console.WriteLine(customFormatter(i.ToString(), items[i]));
+                _console.WriteLine(customFormatter((i + 1).ToString(), items[i]));
             }
             
             _console.WriteLine();
