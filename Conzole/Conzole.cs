@@ -83,8 +83,6 @@ namespace Conzole
         /// <param name="customFormatter">Function takes the index and string and returns the display value.</param>
         public static void List(string[] items, Func<string, string, string> customFormatter)
         {
-            _console.WriteLine();
-
             for (int i = 0; i < items.Length; i++)
             {
                 _console.WriteLine(customFormatter((i + 1).ToString(), items[i]));
