@@ -128,7 +128,7 @@ namespace Conzole
                     var selectedMenu = selectedMenuItem as Menu;
                     if (selectedMenu != null)
                     {
-                        await ListMenuAsync(menu);
+                        await ListMenuAsync(selectedMenu);
                     }
                     else if (!await selectedMenuItem.AsyncAction())
                     {
