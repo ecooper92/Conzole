@@ -59,7 +59,7 @@ namespace Conzole.Tests
             // Assert
             for (int i = 0; i < items.Length; i++)
             {
-                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), items[i].ToString())));
+                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), items[i])));
             }
         }
 
@@ -70,7 +70,6 @@ namespace Conzole.Tests
             var items = new int[] { 3, 4, 2 };
             var listOptions = new ListOptions<int>();
             listOptions.LineFormatter = (index, item) => $"{item}::{index}";
-            listOptions.ItemFormatter = item => $"aaa{item}bbb";
 
             // Act
             ConzoleUtils.List(items, listOptions);
@@ -78,7 +77,7 @@ namespace Conzole.Tests
             // Assert
             for (int i = 0; i < items.Length; i++)
             {
-                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), listOptions.ItemFormatter(items[i]))));
+                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), items[i])));
             }
         }
 

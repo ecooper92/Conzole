@@ -80,7 +80,7 @@ namespace Conzole
             int index = 1;
             foreach (var item in items)
             {
-                _console.WriteLine(listOptions.LineFormatter(index++.ToString(), listOptions.ItemFormatter(item)));
+                _console.WriteLine(listOptions.LineFormatter(index++.ToString(), item));
             }
             
             _console.WriteLine();

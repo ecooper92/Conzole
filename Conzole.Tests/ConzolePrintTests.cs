@@ -33,6 +33,18 @@ namespace Conzole.Tests
         }
 
         [Test]
+        public void PrintListTest()
+        {
+            // Arrange
+            var items = new int[] { 3, 4, 2 };
+
+            // Act
+            ConzoleUtils.List(items);
+
+            // Assert - N/A
+        }
+
+        [Test]
         public void PrintCountTest()
         {
             // Arrange
