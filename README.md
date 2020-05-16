@@ -2,13 +2,33 @@
 Conzole is a collection of static helper functions to simplify data display and input from the command line in DotNet Core.
 
 ## Usage
-The following contains examples of library usage. These functions can be accessed through the "ConzoleUtils" static class.
+The following contains examples of library usage. These functions can be accessed through the `ConzoleUtils` static class.
 
 ### Count
-The Count function takes a collection of items and displays the size of the collection.
+The Count function takes a collection of items and displays the size of the collection. The simplest usage will take a collection of objects and display the count in the collection using the default format:
+```
+var items = new int[] { 3, 4, 2 };
+ConzoleUtils.Count(items);
+```
+Output:
+```
+3 result(s)
+```
+Alternative formatting can be applied for a line by supplying a custom formatter through the `CountOptions` class:
+```
+var items = new int[] { 3, 4, 2 };
+var countOptions = new CountOptions();
+countOptions.ResultFormatter = count => $"{count}!!!";
+
+ConzoleUtils.Count(items, countOptions);
+```
+Output:
+```
+3!!!
+```
 
 ### List
-The List function takes a collection of items and displays the as a list. The simplest usage will take a collection of any objects and convert them to their string representation. For example, the following will list three integers and display with the default format:
+The List function takes a collection of items and displays the as a list. The simplest usage will take a collection of objects and convert them to their string representation. For example, the following will list three integers and display with the default format:
 ```
 var items = new int[] { 3, 4, 2 };
 ConzoleUtils.List(items);
