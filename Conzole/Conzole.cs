@@ -20,11 +20,17 @@ namespace Conzole
         /// Prompts the user to input a string value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        public static string Prompt(string prompt)
+        public static string Prompt(string prompt = "")
         {
-            _console.WriteLine(prompt);
+            // Prompt if provided.
+            if (!string.IsNullOrEmpty(prompt))
+            {
+                _console.WriteLine(prompt);
+            }
+
+            // Read new input.
             var result = _console.ReadLine();
-            Console.WriteLine();
+            _console.WriteLine();
             return result;
         }
 

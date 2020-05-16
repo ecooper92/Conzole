@@ -20,6 +20,118 @@ namespace Conzole.Tests
         }
 
         [Test]
+        public void TestEmptyPrompt()
+        {
+            // Arrange
+            var input = "test-input";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input);
+
+            // Act
+            var result = ConzoleUtils.Prompt(string.Empty);
+
+            // Assert
+            Assert.AreEqual(input, result);
+            mockConsole.Verify(c => c.WriteLine(It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public void TestNullPrompt()
+        {
+            // Arrange
+            var input = "test-input";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input);
+
+            // Act
+            var result = ConzoleUtils.Prompt(null);
+
+            // Assert
+            Assert.AreEqual(input, result);
+            mockConsole.Verify(c => c.WriteLine(It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public void TestPrompt()
+        {
+            // Arrange
+            var input = "test-input";
+            var prompt = "prompt11";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input);
+
+            // Act
+            var result = ConzoleUtils.Prompt(prompt);
+
+            // Assert
+            Assert.AreEqual(input, result);
+            mockConsole.Verify(c => c.WriteLine(prompt), Times.Once);
+        }
+
+        [Test]
+        public void TestPromptInt()
+        {
+            // Arrange
+            var input = 33;
+            var prompt = "prompt11";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input.ToString());
+
+            // Act
+            var success = ConzoleUtils.PromptInt(prompt, out var result);
+
+            // Assert
+            Assert.IsTrue(success);
+            Assert.AreEqual(input, result);
+            mockConsole.Verify(c => c.WriteLine(prompt), Times.Once);
+        }
+
+        [Test]
+        public void TestPromptIntFail()
+        {
+            // Arrange
+            var input = "notanumber33";
+            var prompt = "prompt11";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input);
+
+            // Act
+            var success = ConzoleUtils.PromptInt(prompt, out var result);
+
+            // Assert
+            Assert.IsFalse(success);
+            mockConsole.Verify(c => c.WriteLine(prompt), Times.Once);
+        }
+
+        [Test]
+        public void TestPromptDouble()
+        {
+            // Arrange
+            var input = 33.55;
+            var prompt = "prompt11";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input.ToString());
+
+            // Act
+            var success = ConzoleUtils.PromptDouble(prompt, out var result);
+
+            // Assert
+            Assert.IsTrue(success);
+            Assert.AreEqual(input, result);
+            mockConsole.Verify(c => c.WriteLine(prompt), Times.Once);
+        }
+
+        [Test]
+        public void TestPromptDoubleFail()
+        {
+            // Arrange
+            var input = "notanumber33";
+            var prompt = "prompt11";
+            mockConsole.Setup(c => c.ReadLine()).Returns(input);
+
+            // Act
+            var success = ConzoleUtils.PromptDouble(prompt, out var result);
+
+            // Assert
+            Assert.IsFalse(success);
+            mockConsole.Verify(c => c.WriteLine(prompt), Times.Once);
+        }
+
+        [Test]
         public void TestCount()
         {
             // Arrange
