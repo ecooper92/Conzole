@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,8 +12,6 @@ namespace Conzole
     /// </summary>
     public static class ConzoleUtils
     {
-        internal const string DEFAULT_COUNT_FORMAT = "{0} result(s)";
-
         // Start with the default console.
         private static IConsole _console = new DefaultConsole();
 
@@ -79,6 +78,7 @@ namespace Conzole
         /// Lists a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
+        /// <param name="options">Optional parameters to modify list.</param>
         public static void List<T>(IEnumerable<T> items, ListOptions<T> options = null)
         {
             var listOptions = options ?? new ListOptions<T>();
@@ -96,16 +96,12 @@ namespace Conzole
         /// Counts a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
-        public static void Count<T>(T[] items) => Count(items, DEFAULT_COUNT_FORMAT);
-
-        /// <summary>
-        /// Counts a collection of items for display.
-        /// </summary>
-        /// <param name="items">The items to display.</param>
-        /// <param name="format">Custom format for count.</param>
-        public static void Count<T>(T[] items, string format)
+        /// <param name="options">Optional parameters to modify count.</param>
+        public static void Count<T>(IEnumerable<T> items, CountOptions options = null)
         {
-            _console.WriteLine(string.Format(format, items.Length));
+            var countOptions = options ?? new CountOptions();
+
+            _console.WriteLine(countOptions.ResultFormatter(items.Count()));
             _console.WriteLine();
         }
         

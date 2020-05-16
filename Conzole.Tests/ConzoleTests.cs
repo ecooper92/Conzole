@@ -136,26 +136,28 @@ namespace Conzole.Tests
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
+            var countOptions = new CountOptions();
 
             // Act
             ConzoleUtils.Count(items);
 
             // Assert
-            mockConsole.Verify(c => c.WriteLine(string.Format(ConzoleUtils.DEFAULT_COUNT_FORMAT, items.Length)));
+            mockConsole.Verify(c => c.WriteLine(countOptions.ResultFormatter(items.Length)));
         }
 
         [Test]
         public void TestCountCustomFormat()
         {
             // Arrange
-            var format = "aaa {0} bbb";
             var items = new int[] { 3, 4, 2 };
+            var countOptions = new CountOptions();
+            countOptions.ResultFormatter = count => $"aaa {count} bbb";
 
             // Act
-            ConzoleUtils.Count(items, format);
+            ConzoleUtils.Count(items, countOptions);
 
             // Assert
-            mockConsole.Verify(c => c.WriteLine(string.Format(format, items.Length)));
+            mockConsole.Verify(c => c.WriteLine(countOptions.ResultFormatter(items.Length)));
         }
 
         [Test]
