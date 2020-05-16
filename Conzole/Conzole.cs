@@ -12,7 +12,6 @@ namespace Conzole
     public static class ConzoleUtils
     {
         internal const string DEFAULT_COUNT_FORMAT = "{0} result(s)";
-        internal static readonly Func<string, string, string> DEFAULT_LIST_FORMATTER = (index, value) => $"{index}) {value}";
 
         // Start with the default console.
         private static IConsole _console = new DefaultConsole();
@@ -74,19 +73,14 @@ namespace Conzole
         /// Lists a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
-        public static void List(IEnumerable<string> items) => List(items, DEFAULT_LIST_FORMATTER);
-
-        /// <summary>
-        /// Lists a collection of items for display.
-        /// </summary>
-        /// <param name="items">The items to display.</param>
-        /// <param name="customFormatter">Function takes the index and string and returns the display value.</param>
-        public static void List(IEnumerable<string> items, Func<string, string, string> customFormatter)
+        public static void List<T>(IEnumerable<T> items, ListOptions<T> options = null)
         {
+            var listOptions = options ?? new ListOptions<T>();
+
             int index = 1;
             foreach (var item in items)
             {
-                _console.WriteLine(customFormatter(index++.ToString(), item));
+                _console.WriteLine(listOptions.LineFormatter(index++.ToString(), listOptions.ItemFormatter(item)));
             }
             
             _console.WriteLine();

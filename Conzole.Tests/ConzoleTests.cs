@@ -51,14 +51,15 @@ namespace Conzole.Tests
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
+            var listOptions = new ListOptions<int>();
 
             // Act
-            ConzoleUtils.List(items.Select(i => i.ToString()).ToArray());
+            ConzoleUtils.List(items);
 
             // Assert
             for (int i = 0; i < items.Length; i++)
             {
-                mockConsole.Verify(c => c.WriteLine(ConzoleUtils.DEFAULT_LIST_FORMATTER((i + 1).ToString(), items[i].ToString())));
+                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), items[i].ToString())));
             }
         }
 
@@ -67,15 +68,17 @@ namespace Conzole.Tests
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
-            Func<string, string, string> customFormatter = (index, value) => $"{value}::{index}";
+            var listOptions = new ListOptions<int>();
+            listOptions.LineFormatter = (index, item) => $"{item}::{index}";
+            listOptions.ItemFormatter = item => $"aaa{item}bbb";
 
             // Act
-            ConzoleUtils.List(items.Select(i => i.ToString()).ToArray(), customFormatter);
+            ConzoleUtils.List(items, listOptions);
 
             // Assert
             for (int i = 0; i < items.Length; i++)
             {
-                mockConsole.Verify(c => c.WriteLine(customFormatter((i + 1).ToString(), items[i].ToString())));
+                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), listOptions.ItemFormatter(items[i]))));
             }
         }
 
