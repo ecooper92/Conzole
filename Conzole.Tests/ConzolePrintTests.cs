@@ -79,7 +79,7 @@ namespace Conzole.Tests
             });
 
             // Act
-            await ConzoleUtils.ListMenuAsync(menu);
+            await ConzoleUtils.MenuAsync(menu);
 
             // Assert - N/A
         }

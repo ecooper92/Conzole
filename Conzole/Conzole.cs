@@ -51,25 +51,22 @@ namespace Conzole
         /// Prompts the user to input a binary response (true/false, yes/no, etc..).
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        /// <param name="loopOnInvalid">If true, the user will be prompted until a valid response is provided, otherwise returns false after one failure.</param>
-        /// <param name="positiveResponse">The response required for a positive result.</param>
-        /// <param name="negativeResponse">The response required for a negative result.</param>
-        /// <param name="ignoreCase">If true, responses can be case insensitive and still match.</param>
-        public static bool PromptBinaryQuestion(string prompt, bool loopOnInvalid = true, string positiveResponse = "y", string negativeResponse = "n", bool ignoreCase = true)
+        /// <param name="options">Optional parameters to modify binary question.</param>
+        public static bool BinaryQuestion(string prompt, BinaryQuestionOptions options = null)
         {
+            var binaryOptions = options ?? new BinaryQuestionOptions();
             var answer = string.Empty;
             var isPositive = false;
             var isNegative = false;
-            var comparisonType = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            var comparisonType = binaryOptions.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
             do
             {
-                _console.WriteLine(prompt + $" ({positiveResponse}/{negativeResponse})");
-                answer = _console.ReadLine();
-                isPositive = string.Equals(answer, positiveResponse, comparisonType);
-                isNegative = string.Equals(answer, negativeResponse, comparisonType);
+                answer = Prompt(binaryOptions.Formatter(prompt));
+                isPositive = string.Equals(answer, binaryOptions.PositiveResponse, comparisonType);
+                isNegative = string.Equals(answer, binaryOptions.NegativeResponse, comparisonType);
             }
-            while (loopOnInvalid && !isPositive && !isNegative);
+            while (binaryOptions.RepeatOnInvalid && !isPositive && !isNegative);
 
             return isPositive;
         }
@@ -110,7 +107,7 @@ namespace Conzole
         /// </summary>
         /// <param name="title">The items to display.</param>
         /// <param name="format">Custom format for count.</param>
-        public static async Task ListMenuAsync(Menu menu)
+        public static async Task MenuAsync(Menu menu)
         {
             var continueLooping = true;
             while (continueLooping)
@@ -125,7 +122,7 @@ namespace Conzole
                     var selectedMenu = selectedMenuItem as Menu;
                     if (selectedMenu != null)
                     {
-                        await ListMenuAsync(selectedMenu);
+                        await MenuAsync(selectedMenu);
                     }
                     else if (!await selectedMenuItem.AsyncAction())
                     {
@@ -147,7 +144,7 @@ namespace Conzole
             while (continueLooping)
             {
                 success = await action();
-                if (success || !PromptBinaryQuestion(prompt))
+                if (success || !BinaryQuestion(prompt))
                 {
                     continueLooping = false;
                 }

@@ -208,7 +208,7 @@ namespace Conzole.Tests
             });
 
             // Act
-            await ConzoleUtils.ListMenuAsync(menu);
+            await ConzoleUtils.MenuAsync(menu);
 
             // Assert - N/A
         }
@@ -232,7 +232,7 @@ namespace Conzole.Tests
             });
 
             // Act
-            await ConzoleUtils.ListMenuAsync(menu);
+            await ConzoleUtils.MenuAsync(menu);
 
             // Assert
             Assert.IsTrue(wasCalled);
@@ -257,7 +257,7 @@ namespace Conzole.Tests
             });
 
             // Act
-            await ConzoleUtils.ListMenuAsync(menu);
+            await ConzoleUtils.MenuAsync(menu);
 
             // Assert
             Assert.IsTrue(wasCalled);
@@ -281,7 +281,7 @@ namespace Conzole.Tests
             });
 
             // Act
-            await ConzoleUtils.ListMenuAsync(menu);
+            await ConzoleUtils.MenuAsync(menu);
 
             // Assert
             Assert.IsTrue(wasCalled);
