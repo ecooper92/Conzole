@@ -35,7 +35,16 @@ Output:
 ```
 
 ### Prompt
-The Prompt functions request the user to input a value on console.
+The Prompt functions request the user to input a value on console. The simplest case for a prompt takes an optional text prompt to display to the user then reads from the console and returns the result:
+```
+var result = ConzoleUtils.Prompt("Enter your name here:");
+```
+The other prompt functions are built on top of this function and also convert the resulting string into another data type:
+```
+var success1 = ConzoleUtils.PromptInt("Enter your int here:", out var result);
+var success2 = ConzoleUtils.PromptDouble("Enter your double here:", out var result);
+```
+Since these fuctions are built on top of the TryParse paradigm they follow the pattern of returning a boolean indicating whether a valid value was provided.
 
 ### Menu
 The menu function allows the user to define a navigable menu structure and attach hooks for actions to be performed when entering those menus.
