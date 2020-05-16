@@ -80,10 +80,12 @@ namespace Conzole
         {
             var listOptions = options ?? new ListOptions<T>();
 
-            int index = 1;
+            int index = 0;
             foreach (var item in items)
             {
-                _console.WriteLine(listOptions.LineFormatter(index++.ToString(), item));
+                var displayIndex = listOptions.IndexGenerator(index++);
+                var line = listOptions.LineFormatter(displayIndex, item);
+                _console.WriteLine(line);
             }
             
             _console.WriteLine();

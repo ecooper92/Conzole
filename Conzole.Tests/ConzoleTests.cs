@@ -178,7 +178,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestListCustomFormatter()
+        public void TestListLineFormatter()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
@@ -193,6 +193,23 @@ namespace Conzole.Tests
             {
                 mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), items[i])));
             }
+        }
+
+        [Test]
+        public void TestListIndexGenerator()
+        {
+            // Arrange
+            var items = new int[] { 3, 4, 2 };
+            var listOptions = new ListOptions<int>();
+            listOptions.IndexGenerator = index => ((char)('a' + index)).ToString();
+
+            // Act
+            ConzoleUtils.List(items, listOptions);
+
+            // Assert
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("a", 3)));
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("b", 4)));
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("c", 2)));
         }
 
         [Test]
