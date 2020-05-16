@@ -74,18 +74,19 @@ namespace Conzole
         /// Lists a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
-        public static void List(string[] items) => List(items, DEFAULT_LIST_FORMATTER);
+        public static void List(IEnumerable<string> items) => List(items, DEFAULT_LIST_FORMATTER);
 
         /// <summary>
         /// Lists a collection of items for display.
         /// </summary>
         /// <param name="items">The items to display.</param>
         /// <param name="customFormatter">Function takes the index and string and returns the display value.</param>
-        public static void List(string[] items, Func<string, string, string> customFormatter)
+        public static void List(IEnumerable<string> items, Func<string, string, string> customFormatter)
         {
-            for (int i = 0; i < items.Length; i++)
+            int index = 1;
+            foreach (var item in items)
             {
-                _console.WriteLine(customFormatter((i + 1).ToString(), items[i]));
+                _console.WriteLine(customFormatter(index++.ToString(), item));
             }
             
             _console.WriteLine();
