@@ -88,7 +88,11 @@ namespace Conzole
                 _console.WriteLine(line);
             }
             
-            _console.WriteLine();
+            // Add extra newline for spacing if requested.
+            if (listOptions.PostNewLine)
+            {
+                _console.WriteLine();
+            }
         }
 
         /// <summary>

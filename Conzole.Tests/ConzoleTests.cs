@@ -171,10 +171,28 @@ namespace Conzole.Tests
             ConzoleUtils.List(items);
 
             // Assert
-            for (int i = 0; i < items.Length; i++)
-            {
-                mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter((i + 1).ToString(), items[i])));
-            }
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("1", items[0])), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("2", items[1])), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("3", items[2])), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(), Times.Once);
+        }
+
+        [Test]
+        public void TestPostNewLineDisabledList()
+        {
+            // Arrange
+            var items = new int[] { 3, 4, 2 };
+            var listOptions = new ListOptions<int>();
+            listOptions.PostNewLine = false;
+
+            // Act
+            ConzoleUtils.List(items, listOptions);
+
+            // Assert
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("1", items[0])), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("2", items[1])), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(listOptions.LineFormatter("3", items[2])), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(), Times.Never);
         }
 
         [Test]
