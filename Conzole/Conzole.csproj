@@ -8,6 +8,7 @@
     <PackageProjectUrl>https://github.com/ecooper92/Conzole</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl />
+    <PackageDescription>Conzole is a collection of static helper functions to simplify data display and input from the command line in DotNet Core.</PackageDescription>
     <RepositoryUrl>https://github.com/ecooper92/Conzole</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
