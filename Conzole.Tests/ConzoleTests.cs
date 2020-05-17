@@ -232,7 +232,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestCount()
+        public void CountTest()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
@@ -246,7 +246,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestCountCustomFormat()
+        public void CountCustomFormatTest()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
@@ -261,7 +261,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestList()
+        public void ListTest()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
@@ -278,7 +278,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestPostNewLineDisabledList()
+        public void PostNewLineDisabledListTest()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
@@ -296,7 +296,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestListLineFormatter()
+        public void ListLineFormatterTest()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
@@ -314,7 +314,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestListIndexGenerator()
+        public void ListIndexGeneratorTest()
         {
             // Arrange
             var items = new int[] { 3, 4, 2 };
