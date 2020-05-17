@@ -120,24 +120,19 @@ namespace Conzole
             {
                 WriteMenu(menu);
 
-                if (PromptInt("Enter action#", out var result)
-                    && result <= menu.MenuItems.Length
-                    && (menu.IncludeExit && result >= 0) || (result > 0))
+                var selectedMenuItem = menu.GetMenuItemByKey(Prompt(menu.InputPrompt));
+                var selectedMenu = selectedMenuItem as Menu;
+                if (selectedMenu != null)
                 {
-                    var selectedMenuItem = menu.MenuItems[result];
-                    var selectedMenu = selectedMenuItem as Menu;
-                    if (selectedMenu != null)
-                    {
-                        await MenuAsync(selectedMenu);
-                    }
-                    else if (!await selectedMenuItem.AsyncAction())
-                    {
-                        continueLooping = false;
-                    }
+                    await MenuAsync(selectedMenu);
+                }
+                else if (selectedMenuItem != null)
+                {
+                    continueLooping = await selectedMenuItem.AsyncAction();
                 }
                 else
                 {
-                    _console.WriteLine("Invalid action!");
+                    _console.WriteLine(menu.InvalidInputPrompt);
                 }
             }
         }
@@ -174,19 +169,9 @@ namespace Conzole
             // Write title.
             _console.WriteLine(menu.Title);
 
-            // Write main cases.
-            for (int i = 1; i < menu.MenuItems.Length; i++)
-            {
-                _console.WriteLine($"{i}) {menu.MenuItems[i].Title}");
-            }
-
-            // Write exit case if supported.
-            if (menu.IncludeExit)
-            {
-                _console.WriteLine($"{0}) {menu.MenuItems[0].Title}");
-            }
-            
-            _console.WriteLine();
+            var options = new ListOptions<KeyedValue<MenuItem>>();
+            options.LineFormatter = (index, item) => $"{item.Key}) {item.Value.Title}";
+            List(menu.KeyedMenuItems, options);
         }
     }
 }

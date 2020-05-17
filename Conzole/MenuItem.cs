@@ -12,8 +12,8 @@ namespace Conzole
         /// Constructor.
         /// </summary>
         public MenuItem(string title, Func<Task> action)
+            : this(title)
         {
-            Title = title;
             AsyncAction = async () =>
             {
                 await action();
@@ -25,8 +25,8 @@ namespace Conzole
         /// Constructor.
         /// </summary>
         public MenuItem(string title, Func<Task<bool>> action)
+            : this(title)
         {
-            Title = title;
             AsyncAction = action;
         }
 
@@ -39,7 +39,7 @@ namespace Conzole
         }
 
         /// <summary>
-        /// The title tp be displayed for the menu item.
+        /// The title to be displayed for the menu item.
         /// </summary>
         public string Title { get; }
 

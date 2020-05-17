@@ -231,95 +231,48 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public async Task TestBackListMenuAsync()
+        public async Task NestedMenuAsyncTest()
         {
             // Arrange
-            mockConsole.Setup(c => c.ReadLine()).Returns("0");
-            var menu = new Menu("The menu", new MenuItem[]
-            {
-                new MenuItem("i1", () => Task.CompletedTask),
-                new MenuItem("i2", () => Task.CompletedTask),
-                new MenuItem("i3", () => Task.CompletedTask)
-            });
+            var callCount = 0;
+            mockConsole.SetupSequence(c => c.ReadLine())
+                .Returns("Invalid Input")
+                .Returns("I")
+                .Returns("0")
+                .Returns("a")
+                .Returns("b")
+                .Returns("c")
+                .Returns("II")
+                .Returns("MAGIC");
+
+            var nestedMenu = new Menu("nested menu");
+            nestedMenu.InputPrompt = "NESTED INPUT PROMPT";
+            nestedMenu.InvalidInputPrompt = "NESTED INPUT ERROR";
+            nestedMenu.RemoveExitMenuItem();
+            nestedMenu.AddMenuItem("a", new MenuItem("a1", () => { callCount++; return Task.CompletedTask; }));
+            nestedMenu.AddMenuItem("b", new MenuItem("b1", () => { callCount++; return Task.FromResult(true); }));
+            nestedMenu.AddMenuItem("c", new MenuItem("c1", () => { callCount++; return Task.FromResult(false); }));
+
+            var rootMenu = new Menu("root menu");
+            rootMenu.SetExitMenuItem("EXIT OPTION", "MAGIC2");
+            rootMenu.RemoveExitMenuItem();
+            rootMenu.SetExitMenuItem("EXIT OPTION", "MAGIC");
+            rootMenu.InputPrompt = "ROOT INPUT PROMPT";
+            rootMenu.InvalidInputPrompt = "ROOT INPUT ERROR";
+            rootMenu.AddMenuItem("I", nestedMenu);
+            rootMenu.AddMenuItem("II", new MenuItem("i2", () => { callCount++; return Task.CompletedTask; }));
 
             // Act
-            await ConzoleUtils.MenuAsync(menu);
-
-            // Assert - N/A
-        }
-
-        [Test]
-        public async Task TestActionThenBackListMenuAsync()
-        {
-            // Arrange
-            mockConsole.Setup(c => c.ReadLine()).Returns("3");
-            var wasCalled = false;
-            var menu = new Menu("The menu", new MenuItem[]
-            {
-                new MenuItem("i1", () => Task.CompletedTask),
-                new MenuItem("i2", () => Task.CompletedTask),
-                new MenuItem("i3", () =>
-                {
-                    wasCalled = true;
-                    mockConsole.Setup(c => c.ReadLine()).Returns("0");
-                    return Task.CompletedTask;
-                })
-            });
-
-            // Act
-            await ConzoleUtils.MenuAsync(menu);
+            await ConzoleUtils.MenuAsync(rootMenu);
 
             // Assert
-            Assert.IsTrue(wasCalled);
-        }
-
-        [Test]
-        public async Task TestActionContinueThenBackListMenuAsync()
-        {
-            // Arrange
-            mockConsole.Setup(c => c.ReadLine()).Returns("3");
-            var wasCalled = false;
-            var menu = new Menu("The menu", new MenuItem[]
-            {
-                new MenuItem("i1", () => Task.CompletedTask),
-                new MenuItem("i2", () => Task.CompletedTask),
-                new MenuItem("i3", () =>
-                {
-                    wasCalled = true;
-                    mockConsole.Setup(c => c.ReadLine()).Returns("0");
-                    return Task.FromResult(true);
-                })
-            });
-
-            // Act
-            await ConzoleUtils.MenuAsync(menu);
-
-            // Assert
-            Assert.IsTrue(wasCalled);
-        }
-
-        [Test]
-        public async Task TestActionStopListMenuAsync()
-        {
-            // Arrange
-            mockConsole.Setup(c => c.ReadLine()).Returns("3");
-            var wasCalled = false;
-            var menu = new Menu("The menu", new MenuItem[]
-            {
-                new MenuItem("i1", () => Task.CompletedTask),
-                new MenuItem("i2", () => Task.CompletedTask),
-                new MenuItem("i3", () =>
-                {
-                    wasCalled = true;
-                    return Task.FromResult(false);
-                })
-            });
-
-            // Act
-            await ConzoleUtils.MenuAsync(menu);
-
-            // Assert
-            Assert.IsTrue(wasCalled);
+            Assert.AreEqual(4, callCount);
+            mockConsole.Verify(c => c.WriteLine(nestedMenu.Title), Times.Exactly(4));
+            mockConsole.Verify(c => c.WriteLine(nestedMenu.InputPrompt), Times.Exactly(4));
+            mockConsole.Verify(c => c.WriteLine(nestedMenu.InvalidInputPrompt), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(rootMenu.Title), Times.Exactly(4));
+            mockConsole.Verify(c => c.WriteLine(rootMenu.InputPrompt), Times.Exactly(4));
+            mockConsole.Verify(c => c.WriteLine(rootMenu.InvalidInputPrompt), Times.Once);
         }
     }
 }
