@@ -67,4 +67,37 @@ var success2 = ConzoleUtils.PromptDouble("Enter your double here:", out var resu
 Since these fuctions are built on top of the TryParse paradigm they follow the pattern of returning a boolean indicating whether a valid value was provided.
 
 ### Menu
-The menu function allows the user to define a navigable menu structure and attach hooks for actions to be performed when entering those menus.
+The menu function allows the user to define a navigable menu structure and attach hooks for actions to be performed when entering those menus. For example, the following defines a navigable root menu and nested menu:
+```
+var nestedMenu = new Menu("nested menu");
+nestedMenu.AddMenuItem("a", new MenuItem("a1", () => Task.CompletedTask));
+nestedMenu.AddMenuItem("b", new MenuItem("b1", () => Task.FromResult(true)));
+nestedMenu.AddMenuItem("c", new MenuItem("c1", () => Task.FromResult(false)));
+
+var rootMenu = new Menu("root menu");
+rootMenu.SetExitMenuItem("Exit", "X");
+rootMenu.AddMenuItem("I", nestedMenu);
+rootMenu.AddMenuItem("II", new MenuItem("root action", () => Task.CompletedTask));
+```
+Initially this menu will display:
+```
+root menu
+I) nested menu
+II) root action
+X) Exit
+
+Enter selection:
+```
+Entering "II" will cause the menu to repeat since the Action provided simply returns a completed `Task`, but entering "I" will navigate to the nested menu and display:
+```
+nested menu
+a) a1
+b) b1
+c) c1
+0) Back
+
+Enter selection:
+```
+Entering either "a" or "b" will cause the menu to repeat since returning a completed `Task` or true wrapped in a `Task` have the same effect. However entering "c" returns a false wrapped in a `Task` which has the result of exiting the current menu and returning to the parent menu. The default exit action "0" always returns false and exits the current menu, returning to the parent.
+
+Functions can be substituted for the lambdas in the example above to provide hooks into the menu items.
