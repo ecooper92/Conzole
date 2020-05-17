@@ -8,6 +8,19 @@ namespace Conzole
     public class PromptOptions
     {
         /// <summary>
+        /// Constructor
+        /// </summary>
+        public PromptOptions() {}
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PromptOptions(string prompt)
+        {
+            Prompt = prompt;    
+        }
+
+        /// <summary>
         /// The default prompt to display.
         /// </summary>
         public string Prompt { get; set; } = string.Empty;

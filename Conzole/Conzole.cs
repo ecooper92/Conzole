@@ -24,7 +24,7 @@ namespace Conzole
         /// Prompts the user to input a string value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        public static string Prompt(string prompt) => Prompt(new PromptOptions { Prompt = prompt });
+        public static string Prompt(string prompt) => Prompt(new PromptOptions(prompt));
 
         /// <summary>
         /// Prompts the user to input a string value.
@@ -51,16 +51,42 @@ namespace Conzole
         /// <summary>
         /// Prompts the user to input an integer value.
         /// </summary>
+        /// <param name="result">The result of the user input.</param>
+        public static bool PromptInt(out int result) => PromptInt(string.Empty, out result);
+
+        /// <summary>
+        /// Prompts the user to input an integer value.
+        /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
         /// <param name="result">The result of the user input.</param>
-        public static bool PromptInt(string prompt, out int result) => int.TryParse(Prompt(prompt), out result);
+        public static bool PromptInt(string prompt, out int result) => PromptInt(new PromptOptions(prompt), out result);
+
+        /// <summary>
+        /// Prompts the user to input an integer value.
+        /// </summary>
+        /// <param name="options">The prompt options to provide to the user for input.</param>
+        /// <param name="result">The result of the user input.</param>
+        public static bool PromptInt(PromptOptions options, out int result) => int.TryParse(Prompt(options), out result);
+
+        /// <summary>
+        /// Prompts the user to input an double value.
+        /// </summary>
+        /// <param name="result">The result of the user input.</param>
+        public static bool PromptDouble(out double result) => PromptDouble(string.Empty, out result);
 
         /// <summary>
         /// Prompts the user to input an double value.
         /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
         /// <param name="result">The result of the user input.</param>
-        public static bool PromptDouble(string prompt, out double result) => double.TryParse(Prompt(prompt), out result);
+        public static bool PromptDouble(string prompt, out double result) => PromptDouble(new PromptOptions(prompt), out result);
+
+        /// <summary>
+        /// Prompts the user to input an double value.
+        /// </summary>
+        /// <param name="options">The prompt options to provide to the user for input.</param>
+        /// <param name="result">The result of the user input.</param>
+        public static bool PromptDouble(PromptOptions options, out double result) => double.TryParse(Prompt(options), out result);
 
         /// <summary>
         /// Prompts the user to input a binary response (true/false, yes/no, etc..).
