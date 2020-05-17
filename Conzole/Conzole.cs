@@ -116,10 +116,9 @@ namespace Conzole
         }
         
         /// <summary>
-        /// Counts a collection of items for display.
+        /// Provides an interactive menu for navigation within the user's console window.
         /// </summary>
-        /// <param name="title">The items to display.</param>
-        /// <param name="format">Custom format for count.</param>
+        /// <param name="menu">The menu to display.</param>
         public static async Task MenuAsync(Menu menu)
         {
             var continueLooping = true;
