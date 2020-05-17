@@ -42,7 +42,7 @@ namespace Conzole.Tests
             mockConsole.Setup(c => c.ReadLine()).Returns(input);
 
             // Act
-            var result = ConzoleUtils.Prompt(null);
+            var result = ConzoleUtils.Prompt();
 
             // Assert
             Assert.AreEqual(input, result);
