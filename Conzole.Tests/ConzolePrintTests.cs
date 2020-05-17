@@ -62,20 +62,16 @@ namespace Conzole.Tests
         public async Task PrintMenuTest()
         {
             // Arrange
-            _mockConsole.Setup(c => c.ReadLine()).Returns("3");
+            _mockConsole.SetupSequence(c => c.ReadLine())
+                .Returns("3")
+                .Returns("2")
+                .Returns("0");
 
             var menu = new Menu("The menu");
+            menu.MenuItemFormatter = (key, menuItem) => $"{key}::  !{menuItem.Title}!";
             menu.AddMenuItem("1", new MenuItem("i1", () => Task.CompletedTask));
-            menu.AddMenuItem("2", new MenuItem("i2", () =>
-            {
-                _mockConsole.Setup(c => c.ReadLine()).Returns("0");
-                return Task.CompletedTask;
-            }));
-            menu.AddMenuItem("3", new MenuItem("i3", () =>
-            {
-                _mockConsole.Setup(c => c.ReadLine()).Returns("2");
-                return Task.CompletedTask;
-            }));
+            menu.AddMenuItem("2", new MenuItem("i2", () => Task.CompletedTask));
+            menu.AddMenuItem("3", new MenuItem("i3", () => Task.CompletedTask));
 
             // Act
             await ConzoleUtils.MenuAsync(menu);

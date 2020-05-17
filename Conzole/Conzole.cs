@@ -80,6 +80,13 @@ namespace Conzole
         {
             var listOptions = options ?? new ListOptions<T>();
 
+            // Display title if provided.
+            if (!string.IsNullOrEmpty(listOptions.Title))
+            {
+                _console.WriteLine(listOptions.Title);
+            }
+
+            // Display items in list.
             int index = 0;
             foreach (var item in items)
             {
@@ -118,8 +125,13 @@ namespace Conzole
             var continueLooping = true;
             while (continueLooping)
             {
-                WriteMenu(menu);
+                // List nested menu items.
+                var options = new ListOptions<KeyedValue<MenuItem>>();
+                options.Title = menu.Title;
+                options.LineFormatter = (index, keyedMenuItem) => menu.MenuItemFormatter(keyedMenuItem.Key, keyedMenuItem.Value);
+                List(menu.KeyedMenuItems, options);
 
+                // Perform menu item selection.
                 var selectedMenuItem = menu.GetMenuItemByKey(Prompt(menu.InputPrompt));
                 var selectedMenu = selectedMenuItem as Menu;
                 if (selectedMenu != null)
@@ -159,19 +171,5 @@ namespace Conzole
         /// </summary>
         /// <param name="console">The console to use for IO.</param>
         internal static void SetConsole(IConsole console) => _console = console;
-
-        /// <summary>
-        /// Write menu text to console.
-        /// </summary>
-        /// <param name="menu">The menu to write.</param>
-        private static void WriteMenu(Menu menu)
-        {
-            // Write title.
-            _console.WriteLine(menu.Title);
-
-            var options = new ListOptions<KeyedValue<MenuItem>>();
-            options.LineFormatter = (index, item) => $"{item.Key}) {item.Value.Title}";
-            List(menu.KeyedMenuItems, options);
-        }
     }
 }

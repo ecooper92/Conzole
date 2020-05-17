@@ -28,6 +28,11 @@ namespace Conzole
         }
 
         /// <summary>
+        /// Performs the formating for a menu item. Default "<key>) <title>"
+        /// </summary>
+        public Func<string, MenuItem, string> MenuItemFormatter { get; set; } = (key, menuItem) => $"{key}) {menuItem.Title}";
+
+        /// <summary>
         /// The text to display before the user inputs the menu selection.
         /// </summary>
         public string InputPrompt { get; set; } = "Enter selection:";
