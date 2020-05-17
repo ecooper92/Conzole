@@ -66,6 +66,15 @@ var success2 = ConzoleUtils.PromptDouble("Enter your double here:", out var resu
 ```
 Since these fuctions are built on top of the TryParse paradigm they follow the pattern of returning a boolean indicating whether a valid value was provided.
 
+### Repeat Until Success
+The Repeat Until Success function attempts an action in a loop until either the action returns true or the user provides the negative response. 
+```
+var success = await ConzoleUtils.RepeatUntilSuccess(() =>
+{
+    return Task.FromResult(true);
+});
+```
+
 ### Menu
 The menu function allows the user to define a navigable menu structure and attach hooks for actions to be performed when entering those menus. For example, the following defines a navigable root menu and nested menu:
 ```
