@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Conzole</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Eric Cooper</Authors>
     <Company>N/A</Company>
     <PackageProjectUrl>https://github.com/ecooper92/Conzole</PackageProjectUrl>
