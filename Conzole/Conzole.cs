@@ -18,18 +18,33 @@ namespace Conzole
         /// <summary>
         /// Prompts the user to input a string value.
         /// </summary>
+        public static string Prompt() => Prompt(string.Empty);
+
+        /// <summary>
+        /// Prompts the user to input a string value.
+        /// </summary>
         /// <param name="prompt">The prompt to provide to the user for input.</param>
-        public static string Prompt(string prompt = "")
+        public static string Prompt(string prompt) => Prompt(new PromptOptions { Prompt = prompt });
+
+        /// <summary>
+        /// Prompts the user to input a string value.
+        /// </summary>
+        /// <param name="prompt">The prompt to provide to the user for input.</param>
+        public static string Prompt(PromptOptions options)
         {
             // Prompt if provided.
-            if (!string.IsNullOrEmpty(prompt))
+            if (!string.IsNullOrEmpty(options.Prompt))
             {
-                _console.WriteLine(prompt);
+                _console.WriteLine(options.Prompt);
             }
 
             // Read new input.
             var result = _console.ReadLine();
-            _console.WriteLine();
+            if (options.PostNewLine)
+            {
+                _console.WriteLine();
+            }
+
             return result;
         }
 
