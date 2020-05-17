@@ -215,7 +215,7 @@ namespace Conzole.Tests
         }
 
         [Test]
-        public void TestPromptDoubleFail()
+        public void FailPromptDoubleTest()
         {
             // Arrange
             var input = "notanumber33";
@@ -228,6 +228,7 @@ namespace Conzole.Tests
             // Assert
             Assert.IsFalse(success);
             mockConsole.Verify(c => c.WriteLine(prompt), Times.Once);
+            mockConsole.Verify(c => c.WriteLine(), Times.Once);
         }
 
         [Test]
