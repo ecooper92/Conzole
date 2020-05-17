@@ -274,5 +274,34 @@ namespace Conzole.Tests
             mockConsole.Verify(c => c.WriteLine(rootMenu.InputPrompt), Times.Exactly(4));
             mockConsole.Verify(c => c.WriteLine(rootMenu.InvalidInputPrompt), Times.Once);
         }
+
+        [Test]
+        public async Task RepeatUntilSuccessTest()
+        {
+            // Arrange
+            var callCount = 0;
+            var options = new RepeatUntilSuccessOptions();
+            options.PositiveResponse = "GO";
+            options.NegativeResponse = "NO GO";
+
+            mockConsole.Setup(c => c.ReadLine()).Returns(options.PositiveResponse);
+
+            // Act
+            await ConzoleUtils.RepeatUntilSuccess(() =>
+            {
+                callCount++;
+                if (callCount == 3)
+                {
+                    return Task.FromResult(true);
+                }
+                else
+                {
+                    return Task.FromResult(false);
+                }
+            }, options);
+
+            // Assert
+            Assert.AreEqual(3, callCount);
+        }
     }
 }
