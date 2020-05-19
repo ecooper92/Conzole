@@ -1,3 +1,7 @@
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/ecooper92/Conzole)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/LICENSE.md)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Conzole?label=NuGet%20Downloads)](https://www.nuget.org/packages/Conzole/)
+
 # Conzole
 Conzole is a collection of static helper functions to simplify data display and input from the command line in DotNet Core.
 
