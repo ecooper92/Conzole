@@ -150,10 +150,18 @@ namespace Conzole
         /// <param name="options">Optional parameters to modify count.</param>
         public static void Count<T>(IEnumerable<T> items, CountOptions options = null)
         {
+            // Get default options if none are provided.
             var countOptions = options ?? new CountOptions();
 
-            _console.WriteLine(countOptions.ResultFormatter(items.Count()));
-            _console.WriteLine();
+            // Display count of items.
+            var line = countOptions.ResultFormatter(items.Count());
+            _console.WriteLine(line);
+
+            // Add extra newline for spacing if requested.
+            if (countOptions.PostNewLine)
+            {
+                _console.WriteLine();
+            }
         }
         
         /// <summary>
