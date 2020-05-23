@@ -243,6 +243,7 @@ namespace Conzole.Tests
 
             // Assert
             mockConsole.Verify(c => c.WriteLine(countOptions.ResultFormatter(items.Length)));
+            mockConsole.Verify(c => c.WriteLine(), Times.Once);
         }
 
         [Test]
@@ -251,6 +252,7 @@ namespace Conzole.Tests
             // Arrange
             var items = new int[] { 3, 4, 2 };
             var countOptions = new CountOptions();
+            countOptions.PostNewLine = false;
             countOptions.ResultFormatter = count => $"aaa {count} bbb";
 
             // Act
@@ -258,6 +260,7 @@ namespace Conzole.Tests
 
             // Assert
             mockConsole.Verify(c => c.WriteLine(countOptions.ResultFormatter(items.Length)));
+            mockConsole.Verify(c => c.WriteLine(), Times.Never);
         }
 
         [Test]
