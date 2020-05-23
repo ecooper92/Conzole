@@ -73,7 +73,7 @@ Since these fuctions are built on top of the TryParse paradigm they follow the p
 ### Repeat Until Success
 The Repeat Until Success function attempts an action in a loop until either the action returns true or the user provides the negative response. 
 ```
-var success = await ConzoleUtils.RepeatUntilSuccess(() =>
+var success = await ConzoleUtils.RepeatUntilSuccessAsync(() =>
 {
     return Task.FromResult(true);
 });
