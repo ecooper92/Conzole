@@ -24,5 +24,10 @@ namespace Conzole
         /// Read text before a line terminator.
         /// </summary>
         string ReadLine();
+
+        /// <summary>
+        /// Gets the arguments passed with the application on the command line.
+        /// </summary>
+        string[] GetCommandLineArgs();
     }
 }
