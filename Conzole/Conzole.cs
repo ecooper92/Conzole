@@ -231,6 +231,49 @@ namespace Conzole
         }
 
         /// <summary>
+        /// Gets the parsed the command line args as ordered and switched values.
+        /// </summary>
+        public static CommandLineParameters GetCommandLineParameters()
+        {
+            var args = _console.GetCommandLineArgs();
+
+            var order = 0;
+            var lastWasSwitch = false;
+            var orderedParams = new List<OrderedParameter>();
+            var switchedParams = new Dictionary<string, List<string>>();
+            for (int i = 0; i < args.Length; i++)
+            {
+                var isSwitch = args[i].StartsWith("-") || args[i].StartsWith("/");
+                if (lastWasSwitch)
+                {
+                    var switchName = args[i - 1].Substring(1);
+                    var lastValue = string.Empty;
+                    if (!isSwitch)
+                    {
+                        lastValue = args[i];
+                        lastWasSwitch = false;
+                    }
+
+                    var switchValues = switchedParams.GetOrAdd(switchName);
+                    switchValues.Add(lastValue);
+                }
+                else
+                {
+                    if (isSwitch)
+                    {
+                        lastWasSwitch = true;
+                    }
+                    else
+                    {
+                        orderedParams.Add(new OrderedParameter(order++, args[i]));
+                    }
+                }
+            }
+
+            return new CommandLineParameters(orderedParams, switchedParams.Select(p => new SwitchedParameter(p.Key, p.Value)));
+        }
+
+        /// <summary>
         /// Sets the console used for writing and writing.
         /// </summary>
         /// <param name="console">The console to use for IO.</param>

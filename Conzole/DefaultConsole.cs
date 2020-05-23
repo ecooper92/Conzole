@@ -26,5 +26,10 @@ namespace Conzole
         /// Read text before a line terminator.
         /// </summary>
         public string ReadLine() => Console.ReadLine();
+
+        /// <summary>
+        /// Gets the arguments passed with the application on the command line.
+        /// </summary>
+        public string[] GetCommandLineArgs() => Environment.GetCommandLineArgs();
     }
 }

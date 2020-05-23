@@ -435,5 +435,46 @@ namespace Conzole.Tests
             // Assert
             Assert.AreEqual(3, callCount);
         }
+
+        [Test]
+        public void CommandLineParameterParsingTest()
+        {
+            // Arrange
+            var flag1 = "f";
+            var flag2 = "td";
+            var arg1 = "arg1";
+            var arg2 = "arg2";
+            var arg3 = "arg3";
+            var arg4 = "arg4";
+            var arg5 = "arg5";
+            var arg6 = "arg6";
+            
+            var args = new string[] { arg1, $"-{flag1}", arg2, arg3, $"/{flag1}", arg4, $"/{flag2}", arg5, arg6 };
+            mockConsole.Setup(c => c.GetCommandLineArgs()).Returns(args);
+
+            // Act
+            var results = ConzoleUtils.GetCommandLineParameters();
+
+            // Assert
+            Assert.AreEqual(3, results.OrderedParameters.Count());
+            Assert.AreEqual(2, results.SwitchedParameters.Count());
+
+            var orderedParam1 = results.OrderedParameters.First(p => p.Order == 0);
+            var orderedParam2 = results.OrderedParameters.First(p => p.Order == 1);
+            var orderedParam3 = results.OrderedParameters.First(p => p.Order == 2);
+
+            var flag1Params = results.SwitchedParameters.First(p => p.Switch == flag1);
+            var flag2Params = results.SwitchedParameters.First(p => p.Switch == flag2);
+            
+            Assert.AreEqual(arg1, orderedParam1.Value);
+            Assert.AreEqual(arg3, orderedParam2.Value);
+            Assert.AreEqual(arg6, orderedParam3.Value);
+
+            Assert.AreEqual(2, flag1Params.Values.Count());
+            Assert.AreEqual(1, flag2Params.Values.Count());
+            flag1Params.Values.First(v => v == arg2);
+            flag1Params.Values.First(v => v == arg4);
+            flag2Params.Values.First(v => v == arg5);
+        }
     }
 }
