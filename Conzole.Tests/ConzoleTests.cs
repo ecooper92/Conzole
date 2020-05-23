@@ -403,5 +403,34 @@ namespace Conzole.Tests
             // Assert
             Assert.AreEqual(3, callCount);
         }
+
+        [Test]
+        public async Task RepeatUntilSuccessAsyncTest()
+        {
+            // Arrange
+            var callCount = 0;
+            var options = new RepeatUntilSuccessOptions();
+            options.PositiveResponse = "GO";
+            options.NegativeResponse = "NO GO";
+
+            mockConsole.Setup(c => c.ReadLine()).Returns(options.PositiveResponse);
+
+            // Act
+            await ConzoleUtils.RepeatUntilSuccessAsync(() =>
+            {
+                callCount++;
+                if (callCount == 3)
+                {
+                    return Task.FromResult(true);
+                }
+                else
+                {
+                    return Task.FromResult(false);
+                }
+            }, options);
+
+            // Assert
+            Assert.AreEqual(3, callCount);
+        }
     }
 }

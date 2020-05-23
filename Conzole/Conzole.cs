@@ -194,7 +194,33 @@ namespace Conzole
         /// </summary>
         /// <param name="action">The action to repeat.</param>
         /// <param name="options">Optional parameters to modify repeat.</param>
+        [Obsolete("Replaced by RepeatUntilSuccessAsync")]
         public static async Task<bool> RepeatUntilSuccess(Func<Task<bool>> action, RepeatUntilSuccessOptions options = null)
+        {
+            var success = false;
+            
+            var repeatOptions = options ?? new RepeatUntilSuccessOptions();
+            var binaryOptions = new BinaryQuestionOptions();
+            binaryOptions.PositiveResponse = repeatOptions.PositiveResponse;
+            binaryOptions.NegativeResponse = repeatOptions.NegativeResponse;
+            binaryOptions.IgnoreCase = repeatOptions.IgnoreCase;
+            binaryOptions.RepeatOnInvalid = true;
+
+            do
+            {
+                success = await action();
+            }
+            while (!success && BinaryQuestion(repeatOptions.ContinuePrompt, binaryOptions));
+
+            return success;
+        }
+
+        /// <summary>
+        /// Repeats an action until it returns true or the user declines to continue.
+        /// </summary>
+        /// <param name="action">The action to repeat.</param>
+        /// <param name="options">Optional parameters to modify repeat.</param>
+        public static async Task<bool> RepeatUntilSuccessAsync(Func<Task<bool>> action, RepeatUntilSuccessOptions options = null)
         {
             var success = false;
             
