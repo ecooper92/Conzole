@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -228,6 +229,104 @@ namespace Conzole
             while (!success && BinaryQuestion(repeatOptions.ContinuePrompt, binaryOptions));
 
             return success;
+        }
+
+        /// <summary>
+        /// Gets the parsed the command line args as ordered and switched values.
+        /// </summary>
+        public static T GetCommandLineData<T>()
+            where T : new()
+        {
+            var data = new T();
+
+            var commandLineParameters = GetCommandLineParameters();
+            var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var property in properties)
+            {
+                var orderedAttributes = property.GetCustomAttributes<OrderedParameterAttribute>().ToArray();
+                var switchedAttributes = property.GetCustomAttributes<SwitchedParameterAttribute>().ToArray();
+                if (orderedAttributes.Length == 0 && switchedAttributes.Length == 0)
+                {
+                    continue; // This is not a property configured to be read.
+                }
+                else if (orderedAttributes.Length > 1 || switchedAttributes.Length > 1 || (orderedAttributes.Length > 0 && switchedAttributes.Length > 0))
+                {
+                    throw new ArgumentException($"There must be only one OrderedParameter or SwitchedParameter attribute on property {property.Name}.");
+                }
+
+                // Handle matching attributes to command line parameters.
+                string[] values;
+                if (orderedAttributes.Length > 0)
+                {
+                    var orderedAttribute = orderedAttributes.First();
+                    var parameter = commandLineParameters.OrderedParameters.FirstOrDefault(p => p.Order == orderedAttribute.Order);
+                    if (parameter == null)
+                    {
+                        throw new ArgumentException($"Expected argument at position {orderedAttribute.Order} was not provided.");
+                    }
+
+                    values = new string[] { parameter.Value };
+                }
+                else
+                {
+                    var switchedAttribute = switchedAttributes.First();
+                    var parameter = commandLineParameters.SwitchedParameters.FirstOrDefault(p => p.Switch == switchedAttribute.Switch);
+                    if (parameter == null)
+                    {
+                        values = new string[0];
+                    }
+                    else
+                    {
+                        values = parameter.Values.ToArray();
+                    }
+                }
+
+                // Handle setting property on the data object
+                Func<string, object> parser;
+                var type = property.PropertyType.IsArray ? property.PropertyType.GetElementType() : property.PropertyType;
+                if (type == typeof(string))
+                {
+                    parser = s => s;
+                }
+                else if (type == typeof(int))
+                {
+                    parser = s => int.Parse(s);
+                }
+                else if (type == typeof(double))
+                {
+                    parser = s => double.Parse(s);
+                }
+                else if (type == typeof(bool))
+                {
+                    parser = s => string.Empty.Equals(s) || bool.Parse(s);
+                }
+                else
+                {
+                    throw new ArgumentException($"Unhandled property type: {type.Name}");
+                }
+
+
+                if (property.PropertyType.IsArray)
+                {
+                    var newValues = (IList)Activator.CreateInstance(property.PropertyType, values.Length);
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        newValues[i] = parser(values[i]); 
+                    }
+
+                    property.SetValue(data, newValues);
+                }
+                else
+                {
+                    var firstValue = values.FirstOrDefault();
+                    if (firstValue != null)
+                    {
+                        property.SetValue(data, parser(firstValue));
+                    }
+                }
+            }
+
+            return data;
         }
 
         /// <summary>
