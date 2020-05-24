@@ -239,7 +239,7 @@ namespace Conzole
         {
             var data = new T();
 
-            var commandLineParameters = GetCommandLineParameters();
+            var parameters = GetCommandLineParameters();
             var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties)
             {
@@ -254,76 +254,15 @@ namespace Conzole
                     throw new ArgumentException($"There must be only one OrderedParameter or SwitchedParameter attribute on property {property.Name}.");
                 }
 
-                // Handle matching attributes to command line parameters.
-                string[] values;
-                if (orderedAttributes.Length > 0)
+                // Get the property parser for an argument.
+                var parser = GetCommandLineArgumentParser(property);
+                if (parser == null)
                 {
-                    var orderedAttribute = orderedAttributes.First();
-                    var parameter = commandLineParameters.OrderedParameters.FirstOrDefault(p => p.Order == orderedAttribute.Order);
-                    if (parameter == null)
-                    {
-                        throw new ArgumentException($"Expected argument at position {orderedAttribute.Order} was not provided.");
-                    }
-
-                    values = new string[] { parameter.Value };
-                }
-                else
-                {
-                    var switchedAttribute = switchedAttributes.First();
-                    var parameter = commandLineParameters.SwitchedParameters.FirstOrDefault(p => p.Switch == switchedAttribute.Switch);
-                    if (parameter == null)
-                    {
-                        values = new string[0];
-                    }
-                    else
-                    {
-                        values = parameter.Values.ToArray();
-                    }
+                    throw new ArgumentException($"Unhandled property type: {property.PropertyType.Name}");
                 }
 
-                // Handle setting property on the data object
-                Func<string, object> parser;
-                var type = property.PropertyType.IsArray ? property.PropertyType.GetElementType() : property.PropertyType;
-                if (type == typeof(string))
-                {
-                    parser = s => s;
-                }
-                else if (type == typeof(int))
-                {
-                    parser = s => int.Parse(s);
-                }
-                else if (type == typeof(double))
-                {
-                    parser = s => double.Parse(s);
-                }
-                else if (type == typeof(bool))
-                {
-                    parser = s => string.Empty.Equals(s) || bool.Parse(s);
-                }
-                else
-                {
-                    throw new ArgumentException($"Unhandled property type: {type.Name}");
-                }
-
-
-                if (property.PropertyType.IsArray)
-                {
-                    var newValues = (IList)Activator.CreateInstance(property.PropertyType, values.Length);
-                    for (int i = 0; i < values.Length; i++)
-                    {
-                        newValues[i] = parser(values[i]); 
-                    }
-
-                    property.SetValue(data, newValues);
-                }
-                else
-                {
-                    var firstValue = values.FirstOrDefault();
-                    if (firstValue != null)
-                    {
-                        property.SetValue(data, parser(firstValue));
-                    }
-                }
+                var values = orderedAttributes.Length > 0 ? GetOrderedAttributeValues(orderedAttributes.First(), parameters) : GetSwitchedAttributeValues(switchedAttributes.First(), parameters);
+                SetProperyValues(data, property, parser, values);
             }
 
             return data;
@@ -377,5 +316,84 @@ namespace Conzole
         /// </summary>
         /// <param name="console">The console to use for IO.</param>
         internal static void SetConsole(IConsole console) => _console = console;
+
+        /// <summary>
+        /// Sets a property to the values provided on the given data object.
+        /// </summary>
+        private static string[] GetOrderedAttributeValues(OrderedParameterAttribute orderedAttribute, CommandLineParameters parameters)
+        {
+            var parameter = parameters.OrderedParameters.FirstOrDefault(p => p.Order == orderedAttribute.Order);
+            if (parameter == null)
+            {
+                throw new ArgumentException($"Expected argument at position {orderedAttribute.Order} was not provided.");
+            }
+
+            return new string[] { parameter.Value };
+        }
+
+        /// <summary>
+        /// Sets a property to the values provided on the given data object.
+        /// </summary>
+        private static string[] GetSwitchedAttributeValues(SwitchedParameterAttribute switchedAttribute, CommandLineParameters parameters)
+        {            
+            var parameter = parameters.SwitchedParameters.FirstOrDefault(p => p.Switch == switchedAttribute.Switch);
+            if (parameter != null)
+            {
+                return parameter.Values.ToArray();
+            }
+
+            return new string[0];
+        }
+
+        /// <summary>
+        /// Gets a string parser for the given property.
+        /// </summary>
+        private static Func<string, object> GetCommandLineArgumentParser(PropertyInfo property)
+        {
+            var type = property.PropertyType.IsArray ? property.PropertyType.GetElementType() : property.PropertyType;
+            if (type == typeof(string))
+            {
+                return s => s;
+            }
+            else if (type == typeof(int))
+            {
+                return s => int.Parse(s);
+            }
+            else if (type == typeof(double))
+            {
+                return s => double.Parse(s);
+            }
+            else if (type == typeof(bool))
+            {
+                return s => string.Empty.Equals(s) || bool.Parse(s);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sets a property to the values provided on the given data object.
+        /// </summary>
+        private static void SetProperyValues<T>(T data, PropertyInfo property, Func<string, object> parser, string[] values)
+        {
+            if (property.PropertyType.IsArray)
+            {
+                var newValues = (IList)Activator.CreateInstance(property.PropertyType, values.Length);
+                for (int i = 0; i < values.Length; i++)
+                {
+                    newValues[i] = parser(values[i]); 
+                }
+
+                property.SetValue(data, newValues);
+            }
+            else
+            {
+                var firstValue = values.FirstOrDefault();
+                if (firstValue != null)
+                {
+                    property.SetValue(data, parser(firstValue));
+                }
+            }
+        }
     }
 }
