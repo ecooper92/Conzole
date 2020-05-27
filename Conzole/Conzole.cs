@@ -196,6 +196,36 @@ namespace Conzole
                 }
             }
         }
+        
+        /// <summary>
+        /// Provides a single level interactive menu for navigation within the user's console window.
+        /// </summary>
+        /// <param name="title">The title of the menu.</param>
+        /// <param name="items">The menu items to display.</param>
+        /// <param name="options">Optional parameters to modify menu.</param>
+        public static T Menu<T>(string title, IEnumerable<T> items, MenuOptions<T> options = null)
+        {
+            var result = default(T);
+
+            int key = 0;
+            var menuOptions = options ?? new MenuOptions<T>();
+            var menu = new Menu(title);
+            menu.MenuItemFormatter = options.MenuItemFormatter;
+            menu.InputPrompt = options.InputPrompt;
+            menu.InvalidInputPrompt = options.InvalidInputPrompt;
+            foreach (var item in items)
+            {
+                menu.AddMenuItem(menuOptions.IndexGenerator(key++), new MenuItem(menuOptions.TitleFormatter(item), () =>
+                {
+                    result = item;
+                    return Task.FromResult(false);
+                }));
+            }
+
+            ConzoleUtils.MenuAsync(menu).Wait(); // Wait is a hack for the moment, this will work because we control the menu inputs :\
+
+            return result;
+        }
 
         /// <summary>
         /// Repeats an action until it returns true or the user declines to continue.
