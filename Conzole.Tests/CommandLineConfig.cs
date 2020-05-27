@@ -5,39 +5,51 @@ namespace Conzole
     public class CommandLineConfig
     {
         [OrderedParameter(0)]
-        public int Param1 { get; set; }
-        
+        public int OrderedInt { get; set; }
+
         [OrderedParameter(1)]
-        public double Param2 { get; set; }
+        public bool OrderedBool { get; set; }
         
         [OrderedParameter(2)]
-        public string Param3 { get; set; }
-
-        [SwitchedParameter("a")]
-        public int Param4 { get; set; }
-        
-        [SwitchedParameter("b")]
-        public double Param5 { get; set; }
-        
-        [SwitchedParameter("c")]
-        public string Param6 { get; set; }
+        public double OrderedDouble { get; set; }
         
         [OrderedParameter(3)]
-        public int[] Params1 { get; set; }
+        public string OrderedString { get; set; }
+
+        [SwitchedParameter("int")]
+        public int SwitchedInt { get; set; }
+
+        [SwitchedParameter("bool")]
+        public bool SwitchedBool { get; set; }
+        
+        [SwitchedParameter("double")]
+        public double SwitchedDouble { get; set; }
+        
+        [SwitchedParameter("string")]
+        public string SwitchedString { get; set; }
         
         [OrderedParameter(4)]
-        public double[] Params2 { get; set; }
+        public int[] OrderedIntArray { get; set; }
         
         [OrderedParameter(5)]
-        public string[] Params3 { get; set; }
+        public int[] OrderedBoolArray { get; set; }
+        
+        [OrderedParameter(6)]
+        public double[] OrderedDoubleArray { get; set; }
+        
+        [OrderedParameter(7)]
+        public string[] OrderedStringArray { get; set; }
+        
+        [SwitchedParameter("i")]
+        public int[] SwitchedIntArray { get; set; }
+        
+        [SwitchedParameter("i")]
+        public bool[] SwitchedBoolArray { get; set; }
         
         [SwitchedParameter("d")]
-        public int[] Params4 { get; set; }
+        public double[] SwitchedDoubleArray { get; set; }
         
-        [SwitchedParameter("e")]
-        public double[] Params5 { get; set; }
-        
-        [SwitchedParameter("f")]
-        public string[] Params6 { get; set; }
+        [SwitchedParameter("s")]
+        public string[] SwitchedStringArray { get; set; }
     }
 }
