@@ -402,6 +402,25 @@ namespace Conzole.Tests
         }
 
         [Test]
+        public void FlatMenuNoOptionsTest()
+        {
+            // Arrange
+            mockConsole.SetupSequence(c => c.ReadLine())
+                .Returns("Invalid Input")
+                .Returns("2");
+
+            var title = "the title";
+            var items = new string[] { "i1", "i2", "i3" };
+
+            // Act
+            var result = ConzoleUtils.Menu(title, items);
+
+            // Assert
+            mockConsole.Verify(c => c.WriteLine(title), Times.Exactly(2));
+            Assert.AreEqual("i2", result);
+        }
+
+        [Test]
         public async Task RepeatUntilSuccessTest()
         {
             // Arrange
