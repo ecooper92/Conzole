@@ -210,9 +210,9 @@ namespace Conzole
             int key = 0;
             var menuOptions = options ?? new MenuOptions<T>();
             var menu = new Menu(title);
-            menu.MenuItemFormatter = options.MenuItemFormatter;
-            menu.InputPrompt = options.InputPrompt;
-            menu.InvalidInputPrompt = options.InvalidInputPrompt;
+            menu.MenuItemFormatter = menuOptions.MenuItemFormatter;
+            menu.InputPrompt = menuOptions.InputPrompt;
+            menu.InvalidInputPrompt = menuOptions.InvalidInputPrompt;
             foreach (var item in items)
             {
                 menu.AddMenuItem(menuOptions.IndexGenerator(key++), new MenuItem(menuOptions.TitleFormatter(item), () =>
