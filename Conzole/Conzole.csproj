@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Conzole</PackageId>
-    <Version>0.4.4</Version>
+    <Version>0.4.5</Version>
     <Authors>Eric Cooper</Authors>
     <Company>N/A</Company>
     <PackageProjectUrl>https://github.com/ecooper92/Conzole</PackageProjectUrl>
@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/ecooper92/Conzole</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReleaseNotes>Added initial support for parsing command line arguments, as well as an addition Menu function for selecting items from a flat collection.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added overload to AddMenuItem in Menu that no longer requires a key to be provided. By default incrementing numbers beginning with 1 will be used and there is also a new KeyGenerator property to supply an alternate implementation.</PackageReleaseNotes>
     <PackageTags>console console-application utility tools library commandline list menu count prompt dotnetcore</PackageTags>
   </PropertyGroup>
   <ItemGroup>
