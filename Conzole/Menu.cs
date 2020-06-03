@@ -33,6 +33,11 @@ namespace Conzole
         public Func<string, MenuItem, string> MenuItemFormatter { get; set; } = (key, menuItem) => $"{key}) {menuItem.Title}";
 
         /// <summary>
+        /// Provides a default key based on the entry number in the menu. Defaults to incrementing numbers beginning with 1.
+        /// </summary>
+        public Func<int, string> KeyGenerator { get; set; } = index => (index + 1).ToString();
+
+        /// <summary>
         /// The text to display before the user inputs the menu selection.
         /// </summary>
         public string InputPrompt { get; set; } = "Enter selection:";
@@ -76,6 +81,11 @@ namespace Conzole
         /// Attempts to add a menu item to the menu.
         /// </summary>
         public bool AddMenuItem(string key, MenuItem menuItem) => AddMenuItem(new KeyedValue<MenuItem>(key, menuItem), true);
+
+        /// <summary>
+        /// Attempts to add a menu item to the menu.
+        /// </summary>
+        public bool AddMenuItem(MenuItem menuItem) => AddMenuItem(new KeyedValue<MenuItem>(KeyGenerator(_keyedMenuItems.Count), menuItem), true);
 
         /// <summary>
         /// Attempts to remove a menu item from the menu.

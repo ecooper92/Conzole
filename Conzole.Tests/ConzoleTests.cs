@@ -334,6 +334,36 @@ namespace Conzole.Tests
         }
 
         [Test]
+        public async Task MenuNoKeyAsyncTest()
+        {
+            // Arrange
+            var callCount = 0;
+            mockConsole.SetupSequence(c => c.ReadLine())
+                .Returns("Invalid Input")
+                .Returns("0")
+                .Returns("5")
+                .Returns("III")
+                .Returns("2")
+                .Returns("4")
+                .Returns("MAGIC");
+
+            var rootMenu = new Menu("root menu");
+            rootMenu.SetExitMenuItem("EXIT OPTION", "MAGIC");
+            rootMenu.AddMenuItem("II", new MenuItem("i2", () => { callCount++; return Task.CompletedTask; }));
+            rootMenu.AddMenuItem(new MenuItem("i3", () => { callCount++; return Task.CompletedTask; }));
+            rootMenu.AddMenuItem("III", new MenuItem("i2", () => { callCount++; return Task.CompletedTask; }));
+            rootMenu.AddMenuItem(new MenuItem("i4", () => { callCount++; return Task.CompletedTask; }));
+
+            // Act
+            await ConzoleUtils.MenuAsync(rootMenu);
+
+            // Assert
+            Assert.AreEqual(3, callCount);
+            mockConsole.Verify(c => c.WriteLine(rootMenu.Title), Times.Exactly(7));
+            mockConsole.Verify(c => c.WriteLine(rootMenu.InputPrompt), Times.Exactly(7));
+        }
+
+        [Test]
         public async Task NestedMenuAsyncTest()
         {
             // Arrange
