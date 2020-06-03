@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -263,6 +264,43 @@ namespace Conzole
         /// <summary>
         /// Gets the parsed the command line args as ordered and switched values.
         /// </summary>
+        public static T GetCommandLineData<T>()
+            where T : new()
+        {
+            var data = new T();
+
+            var parameters = GetCommandLineParameters();
+            var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var property in properties)
+            {
+                var orderedAttributes = property.GetCustomAttributes<OrderedParameterAttribute>().ToArray();
+                var switchedAttributes = property.GetCustomAttributes<SwitchedParameterAttribute>().ToArray();
+                if (orderedAttributes.Length == 0 && switchedAttributes.Length == 0)
+                {
+                    continue; // This is not a property configured to be read.
+                }
+                else if (orderedAttributes.Length > 1 || switchedAttributes.Length > 1 || (orderedAttributes.Length > 0 && switchedAttributes.Length > 0))
+                {
+                    throw new ArgumentException($"There must be only one OrderedParameter or SwitchedParameter attribute on property {property.Name}.");
+                }
+
+                // Get the property parser for an argument.
+                var parser = GetCommandLineArgumentParser(property);
+                if (parser == null)
+                {
+                    throw new ArgumentException($"Unhandled property type: {property.PropertyType.Name}");
+                }
+
+                var values = orderedAttributes.Length > 0 ? GetOrderedAttributeValues(orderedAttributes.First(), parameters) : GetSwitchedAttributeValues(switchedAttributes.First(), parameters);
+                SetProperyValues(data, property, parser, values);
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Gets the parsed the command line args as ordered and switched values.
+        /// </summary>
         public static CommandLineParameters GetCommandLineParameters()
         {
             var args = _console.GetCommandLineArgs();
@@ -308,5 +346,84 @@ namespace Conzole
         /// </summary>
         /// <param name="console">The console to use for IO.</param>
         internal static void SetConsole(IConsole console) => _console = console;
+
+        /// <summary>
+        /// Sets a property to the values provided on the given data object.
+        /// </summary>
+        private static string[] GetOrderedAttributeValues(OrderedParameterAttribute orderedAttribute, CommandLineParameters parameters)
+        {
+            var parameter = parameters.OrderedParameters.FirstOrDefault(p => p.Order == orderedAttribute.Order);
+            if (parameter == null)
+            {
+                throw new ArgumentException($"Expected argument at position {orderedAttribute.Order} was not provided.");
+            }
+
+            return new string[] { parameter.Value };
+        }
+
+        /// <summary>
+        /// Sets a property to the values provided on the given data object.
+        /// </summary>
+        private static string[] GetSwitchedAttributeValues(SwitchedParameterAttribute switchedAttribute, CommandLineParameters parameters)
+        {            
+            var parameter = parameters.SwitchedParameters.FirstOrDefault(p => p.Switch == switchedAttribute.Switch);
+            if (parameter != null)
+            {
+                return parameter.Values.ToArray();
+            }
+
+            return new string[0];
+        }
+
+        /// <summary>
+        /// Gets a string parser for the given property.
+        /// </summary>
+        private static Func<string, object> GetCommandLineArgumentParser(PropertyInfo property)
+        {
+            var type = property.PropertyType.IsArray ? property.PropertyType.GetElementType() : property.PropertyType;
+            if (type == typeof(string))
+            {
+                return s => s;
+            }
+            else if (type == typeof(int))
+            {
+                return s => int.Parse(s);
+            }
+            else if (type == typeof(double))
+            {
+                return s => double.Parse(s);
+            }
+            else if (type == typeof(bool))
+            {
+                return s => string.Empty.Equals(s) || bool.Parse(s);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sets a property to the values provided on the given data object.
+        /// </summary>
+        private static void SetProperyValues<T>(T data, PropertyInfo property, Func<string, object> parser, string[] values)
+        {
+            if (property.PropertyType.IsArray)
+            {
+                var newValues = (IList)Activator.CreateInstance(property.PropertyType, values.Length);
+                for (int i = 0; i < values.Length; i++)
+                {
+                    newValues[i] = parser(values[i]); 
+                }
+
+                property.SetValue(data, newValues);
+            }
+            else
+            {
+                var firstValue = values.FirstOrDefault();
+                if (firstValue != null)
+                {
+                    property.SetValue(data, parser(firstValue));
+                }
+            }
+        }
     }
 }

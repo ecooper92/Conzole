@@ -548,5 +548,18 @@ namespace Conzole.Tests
             flag1Params.Values.First(v => v == arg4);
             flag2Params.Values.First(v => v == arg5);
         }
+
+        [Test]
+        public void CommandLineDataParsingTest()
+        {
+            // Arrange
+            var args = new string[] { "2", "2.2", "-a", "3", "/b", "6.6", "arg5", "-c", "arg1", "-d", "3", "/e", "4.2", "3", "/d", "6", "3.3", "-f", "arg2", "-f", "arg3", "arg6", "-f", "arg4" };
+            mockConsole.Setup(c => c.GetCommandLineArgs()).Returns(args);
+
+            // Act
+            var results = ConzoleUtils.GetCommandLineData<CommandLineConfig>();
+
+            // Assert
+        }
     }
 }
